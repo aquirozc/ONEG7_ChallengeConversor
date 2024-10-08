@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" stylesheets="@FrutigerRedmond.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <GridPane style="-fx-border-width: 1 0;" BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="Antes de empezar" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+               <font>
+                  <Font size="30.0" />
+               </font>
+            </Label>
+            <TextField id="key_tf" maxWidth="-Infinity" prefHeight="33.0" prefWidth="300.0" style="-fx-text-fill: black;" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP" />
+            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="No se pudo cargar tu clave de API, por favor procede a escribirla para poder utilizar el programa." textAlignment="CENTER" wrappingWidth="300.0" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Text>
+            <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowSpan="3" GridPane.valignment="BOTTOM">
+               <image>
+                  <Image url="@Keys.png" />
+               </image>
+               <GridPane.margin>
+                  <Insets bottom="500.0" />
+               </GridPane.margin>
+            </ImageView>
+            <BorderPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="3">
+               <bottom>
+                  <ImageView fitHeight="222.0" fitWidth="222.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER_RIGHT">
+                     <image>
+                        <Image url="@Keys.png" />
+                     </image>
+                     <BorderPane.margin>
+                        <Insets bottom="22.0" right="22.0" />
+                     </BorderPane.margin>
+                  </ImageView>
+               </bottom>
+            </BorderPane>
+         </children>
+         <styleClass>
+            <String fx:value="secondary-background" />
+            <String fx:value="border" />
+         </styleClass>
+      </GridPane>
+   </center>
+   <bottom>
+      <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0" style="-fx-alignment: center;" BorderPane.alignment="CENTER">
+         <children>
+            <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <Button id="use_sampledata_btn" mnemonicParsing="false" prefHeight="33.0" styleClass="secondary-button" text="Usar datos de muestra" />
+            <Button id="use_fetchdata_btn" mnemonicParsing="false" prefHeight="33.0" styleClass="primary-button" text="Continuar" />
+         </children>
+         <padding>
+            <Insets left="33.0" right="33.0" />
+         </padding>
+      </HBox>
+   </bottom>
+   <top>
+      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label maxHeight="1.7976931348623157E308" text="Conversor de monedas">
+               <HBox.margin>
+                  <Insets left="33.0" />
+               </HBox.margin>
+               <font>
+                  <Font size="36.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+   </top>
+   <styleClass>
+      <String fx:value="primary-background" />
+      <String fx:value="border" />
+   </styleClass>
+</BorderPane>

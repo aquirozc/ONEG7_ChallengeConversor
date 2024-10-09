@@ -19,4 +19,8 @@ public interface IControllerFXML {
 		return parent;
 	}
 
+	public void begin();
+	public void begin(Object key);
+	public Parent getParent();
+
 }

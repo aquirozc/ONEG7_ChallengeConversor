@@ -1,58 +1,105 @@
 package com.aquirozc.cconverter.controller;
 
-import com.aquirozc.cconverter.exchange.Country;
-import com.aquirozc.cconverter.exchange.ERKnowledgeBase;
-import com.aquirozc.cconverter.exchange.OnlineConversor;
-import com.aquirozc.cconverter.exchange.SampleData;
-import com.google.gson.Gson;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.aquirozc.cconverter.exchange.ERKnowledgeBase;
+import com.aquirozc.cconverter.net.ERApiClient;
+import com.aquirozc.cconverter.preferences.SharedPreferences;
+
+import javafx.animation.PauseTransition;
+import javafx.animation.TranslateTransition;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
-@SuppressWarnings("unchecked")
-public class MainController implements IControllerFXML {
+public class MainController{
 
-    private Parent parent = this.getActivity("Main.fxml");
+    private Map<ControllerDirectory, IControllerFXML> map = new HashMap<>();
+    private ControllerDirectory lastScene = null;
+    private Stage stage;
 
-    private TextField ammountTF = (TextField) parent.lookup("#ammount_tf");
-    private ComboBox<Country> fromCB = (ComboBox<Country>) parent.lookup("#from_cb");
-    private ComboBox<Country> toCB = (ComboBox<Country>) parent.lookup("#to_cb");
-    private Button convertBTN = (Button) parent.lookup("#convert_btn");
+    public MainController(Stage stage){
 
-    private OnlineConversor conversor = new OnlineConversor(new Gson().fromJson(SampleData.SAMPLE_JSON, ERKnowledgeBase.class));
+        this.stage = stage;
+        this.stage.setResizable(false);
+        this.stage.show();
 
-    public MainController (Stage stage){
-        Scene scene = new Scene(parent);
-		stage.setMinWidth(800);
-		stage.setMinHeight(575);
-		stage.setWidth(900);
-		stage.setHeight(600);
-		stage.setTitle("Conversor de Monedas (Alejandro Quiroz Carmona)");
-		stage.setScene(scene);
-		stage.show();
+        map.put(ControllerDirectory.SETUP_CONTROLLER, new SetupController(this));
+        map.put(ControllerDirectory.CONVERTER_CONTROLLER, new ConverterController(this));
 
-        fromCB.getItems().addAll(Country.values());
-        toCB.getItems().addAll(Country.values());
-
-        convertBTN.setOnMouseClicked(this::convertAmmount);
+        try {
+            SharedPreferences.init();
+            ERKnowledgeBase base = ERApiClient.fetchApiData(SharedPreferences.getApiKey());
+            map.get(ControllerDirectory.CONVERTER_CONTROLLER).begin(base);
+        } catch (Exception e) {
+            map.get(ControllerDirectory.SETUP_CONTROLLER).begin();
+        }
+        
     }
 
-    private void convertAmmount(MouseEvent e){
-
-        Country from = fromCB.getSelectionModel().getSelectedItem();
-        Country to = toCB.getSelectionModel().getSelectedItem();
-
-        float x = Float.parseFloat(ammountTF.getText());
-        float y = conversor.convert(from, to, x);
-
-        new Alert(javafx.scene.control.Alert.AlertType.INFORMATION, String.format("%f %s = %f %s", x, from.ISO4217Code, y, to.ISO4217Code)).showAndWait();
-
+    public IControllerFXML getController(ControllerDirectory k){
+        return map.get(k);
     }
-    
+
+    public void updateScene(ControllerDirectory k){
+
+        if (lastScene == null){
+            lastScene = k;
+            this.stage.setScene(new Scene(map.get(k).getParent(), 1000,600));
+            return;
+        }
+
+        try {
+			
+			// Crear un contenedor que contendrá ambas escenas
+			Group rootGroup = new Group();
+			Parent oldroot = stage.getScene().getRoot();
+
+			// Añadir la escena antigua al contenedor
+			rootGroup.getChildren().add(oldroot);
+
+			// Añadir la nueva escena al contenedor (fuera de la vista)
+			map.get(k).getParent().setTranslateX(stage.getWidth());
+			rootGroup.getChildren().add(map.get(k).getParent());
+
+			// Crear una nueva transición de deslizamiento desde el lado derecho
+			TranslateTransition transition = new TranslateTransition();
+			transition.setDuration(Duration.millis(500));
+			transition.setFromX(stage.getWidth());
+			transition.setToX(0);
+
+			// Configurar un manejador de eventos para manejar el evento de finalización de la transición
+			transition.setOnFinished( e -> {
+			       try {
+			    	   // Actualizar la escena con la nueva root después de que la transición haya terminado
+				        stage.getScene().setRoot(map.get(k).getParent());
+				} catch (Exception e2) {
+					// TODO: handle exception
+				}
+			    
+			});
+
+			// Aplicar la transición al nodo de la nueva escena
+			transition.setNode(map.get(k).getParent());
+			transition.play();
+
+			// Aplicar el contenedor con ambas escenas a la ventana
+			stage.getScene().setRoot(rootGroup);
+			
+			PauseTransition	pause = new PauseTransition(Duration.millis(650));
+			pause.setOnFinished(e -> rootGroup.getChildren().remove(oldroot));
+			pause.play();
+			
+		} catch (Exception e) {}
+    }
+
+    public void updateSceneBasic(ControllerDirectory k){
+        try {
+            stage.getScene().setRoot(map.get(k).getParent());
+        } catch (Exception e) {}
+    }
+ 
 }

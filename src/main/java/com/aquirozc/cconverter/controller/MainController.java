@@ -3,6 +3,7 @@ package com.aquirozc.cconverter.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.aquirozc.cconverter.data.RecordDatabase;
 import com.aquirozc.cconverter.exchange.ERKnowledgeBase;
 import com.aquirozc.cconverter.net.ERApiClient;
 import com.aquirozc.cconverter.preferences.SharedPreferences;
@@ -29,8 +30,10 @@ public class MainController{
 
         map.put(ControllerDirectory.SETUP_CONTROLLER, new SetupController(this));
         map.put(ControllerDirectory.CONVERTER_CONTROLLER, new ConverterController(this));
+        map.put(ControllerDirectory.RECORD_CONTROLLER, new RecordController(this));
 
         try {
+            RecordDatabase.init();
             SharedPreferences.init();
             ERKnowledgeBase base = ERApiClient.fetchApiData(SharedPreferences.getApiKey());
             map.get(ControllerDirectory.CONVERTER_CONTROLLER).begin(base);
@@ -71,17 +74,6 @@ public class MainController{
 			transition.setFromX(stage.getWidth());
 			transition.setToX(0);
 
-			// Configurar un manejador de eventos para manejar el evento de finalización de la transición
-			transition.setOnFinished( e -> {
-			       try {
-			    	   // Actualizar la escena con la nueva root después de que la transición haya terminado
-				        stage.getScene().setRoot(map.get(k).getParent());
-				} catch (Exception e2) {
-					// TODO: handle exception
-				}
-			    
-			});
-
 			// Aplicar la transición al nodo de la nueva escena
 			transition.setNode(map.get(k).getParent());
 			transition.play();
@@ -96,10 +88,8 @@ public class MainController{
 		} catch (Exception e) {}
     }
 
-    public void updateSceneBasic(ControllerDirectory k){
-        try {
-            stage.getScene().setRoot(map.get(k).getParent());
-        } catch (Exception e) {}
-    }
+    public void updateSceneBasic(ControllerDirectory k) {
+		stage.getScene().setRoot(map.get(k).getParent());
+	}
  
 }

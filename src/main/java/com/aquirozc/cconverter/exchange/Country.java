@@ -1,6 +1,5 @@
 package com.aquirozc.cconverter.exchange;
-
-public enum Country {
+public enum Country{
 
     EMIRATOS_ARABES_UNIDOS("AED", "Dirham de los Emiratos Arabes Unidos"),
     AFGANISTAN("AFN", "Afgani afgano"),

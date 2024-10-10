@@ -5,8 +5,10 @@ import com.aquirozc.cconverter.exchange.SampleData;
 import com.aquirozc.cconverter.net.ERApiClient;
 import com.aquirozc.cconverter.preferences.SharedPreferences;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 
 public class SetupController implements IControllerFXML {
@@ -15,6 +17,9 @@ public class SetupController implements IControllerFXML {
     private Button useFetchDataBTN = (Button) parent.lookup("#use_fetchdata_btn");
     private Button useSampleDataBTN = (Button) parent.lookup("#use_sampledata_btn");
     private TextField keyTF = (TextField) parent.lookup("#key_tf");
+
+    private Alert unsavedPreferencesWarning = new Alert(AlertType.ERROR, "No se pudo guardar tu clave, tendrás que volver a escribirla la próxima vez.");
+    private Alert badKeyWarning = new Alert(AlertType.ERROR,"La clave que escribiste no es valida, vuelve a intentarlo.");
 
     private MainController controller;
 
@@ -50,12 +55,13 @@ public class SetupController implements IControllerFXML {
             try {
                 SharedPreferences.saveApiKey(key);
             } catch (Exception error) {
-                
+                unsavedPreferencesWarning.showAndWait();
             }
 
             controller.getController(ControllerDirectory.CONVERTER_CONTROLLER).begin(base);
 
         } catch (Exception error) {
+            badKeyWarning.showAndWait();
             return;
         }
 
